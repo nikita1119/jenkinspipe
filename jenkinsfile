@@ -7,10 +7,30 @@ pipeline {
     }
 
     stages {
+		stage ('Test'){
+			steps{
+				input 'Do you want to proceed?'
+			}
+		}
+	stage ('pre-build'){
+			parallel{
+				stage ('unittest'){
+					steps{
+						echo 'I am in Unit Testing Phase....'
+					}
+				}	
+				stage ('integrationtest'){
+					steps{
+						echo 'I am in Integration Testing Phase....'
+					}
+				}	
+			}
+		}
+	
         stage('Build') {
             steps {
                 // Get some code from a GitHub repository
-                git 'https://github.com/nikita1119/jenkinspipe.git'
+                git 'https://github.com/githubriya/bankapp.git'
 
                 // Run Maven on a Unix agent.
                 //sh "mvn -Dmaven.test.failure.ignore=true clean package"
@@ -23,7 +43,7 @@ pipeline {
                 // If Maven was able to run the tests, even if some of the test
                 // failed, record the test results and archive the jar file.
                 success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
+                    junit '*/target/surefire-reports/TEST-.xml'
                     archiveArtifacts 'Day1-BankApp/target/*.jar'
                 }
             }
